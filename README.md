@@ -1,1 +1,3 @@
-# generative-art-playground
+# Generative Art Playground
+
+![Sketch](./screenshot.png)
