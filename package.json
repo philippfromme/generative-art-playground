@@ -6,6 +6,7 @@
   "scripts": {
     "build": "webpack --mode=production --node-env production",
     "start": "webpack serve --open --mode=development --node-env development",
+    "start:hello-world": "cross-env SKETCH=hello-world webpack serve --open --mode=development --node-env development",
     "deploy": "npm run build && gh-pages -d dist"
   },
   "keywords": [
