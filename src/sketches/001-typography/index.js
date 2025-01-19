@@ -1,14 +1,16 @@
 import P5 from 'p5';
 
+const ROWS = 4;
 const MAX_DISTANCE = 2;
+const INTERVAL = 10;
 
 function createRandom() {
   const rows = [];
 
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < ROWS; i++) {
     const row = [];
 
-    for (let j = 0; j < 4; j++) {
+    for (let j = 0; j < ROWS; j++) {
       row.push(Math.round(Math.random()));
     }
 
@@ -111,7 +113,7 @@ const sketch = (p) => {
   p.draw = () => {
     p.background(255);
 
-    if (!paused && i % 30 === 0) {
+    if (!paused && i % INTERVAL === 0) {
       visible = !visible;
 
       rows = createRandom();
