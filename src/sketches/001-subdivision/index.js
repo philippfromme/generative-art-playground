@@ -132,4 +132,12 @@ const sketch = (p) => {
   }
 }
 
-new P5(sketch);
+function render(node) {
+  const instance = new P5(sketch, node);
+
+  return () => {
+    instance.remove();
+  };
+}
+
+export default render;

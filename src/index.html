@@ -5,17 +5,53 @@
     <title>Sketch</title>
     <style>
       html, body, main {
+        position: relative;
         height: 100%;
+        width: 100%;
         margin: 0;
       }
 
-      main {
+      #gallery, #sketch {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      #gallery {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(5, minmax(200px, 1fr));
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+
+      .thumbnail {
+        aspect-ratio: 1 / 1;
+        background: black;
+        background-size: cover;
+        background-position: center;
+
+        &:hover {
+          filter: invert(75%);
+        }
+      }
+
+      #sketch {
         display: flex;
-        align-items: center;
         justify-content: center;
+        align-items: center;
+        overflow: hidden;
+      }
+
+      .hidden {
+        display: none !important;
       }
     </style>
   </head>
   <body>
+    <div id="gallery" class="hidden"></div>
+    <div id="sketch" class="hidden"></div>
   </body>
 </html>

@@ -6,7 +6,6 @@
   "scripts": {
     "build": "webpack --mode=production --node-env production",
     "start": "webpack serve --open --mode=development --node-env development",
-    "start:hello-world": "cross-env SKETCH=hello-world webpack serve --open --mode=development --node-env development",
     "deploy": "npm run build && gh-pages -d dist"
   },
   "keywords": [
@@ -30,5 +29,9 @@
     "webpack": "^5.75.0",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.9.3"
+  },
+  "devDependencies": {
+    "file-loader": "^6.2.0",
+    "url-loader": "^4.1.1"
   }
 }
