@@ -1,14 +1,21 @@
 import P5 from 'p5';
 
+import GUI from 'lil-gui'; 
+
+const config = {
+  rows: 7,
+  columns: 7,
+  padding: 1
+};
+
+const gui = new GUI();
+
+gui.add(config, 'rows', 1, 10, 1);
+gui.add(config, 'columns', 1, 10, 1);
+gui.add(config, 'padding', 0, 10, 1);
+
 const WIDTH = 800,
-      HEIGHT = 800,
-      ROWS = 7,
-      COLUMNS = 7;
-
-const WIDTH_STEP = WIDTH / COLUMNS,
-      HEIGHT_STEP = HEIGHT / ROWS;
-
-const PADDING = 1;
+      HEIGHT = 800;
 
 let points = [];
 
@@ -20,8 +27,8 @@ const sketch = (p) => {
 
     points = [];
 
-    for (let i = 0; i < ROWS; i++) {
-      for (let j = 0; j < COLUMNS; j++) {
+    for (let i = 0; i < config.rows; i++) {
+      for (let j = 0; j < config.columns; j++) {
         points.push({
           x: j,
           y: i
@@ -36,19 +43,24 @@ const sketch = (p) => {
   }
 
   const drawPoints = () => {
+    const WIDTH_STEP = WIDTH / config.columns,
+          HEIGHT_STEP = HEIGHT / config.rows;
+
+    console.log('width step', WIDTH_STEP);
+    console.log('height step', HEIGHT_STEP);
+
     p.noStroke();
     p.fill(0);
 
     for (let count = 0; count < points.length; count++) {
-
-      const j = count % ROWS;
-      const i = Math.floor(count / ROWS);
+      const j = count % config.rows;
+      const i = Math.floor(count / config.rows);
 
       // gradient fill using rgb
-      p.fill(p.map(i * j, 0, ROWS * COLUMNS, 0, 255), p.map(i * j, 0, ROWS * COLUMNS, 0, 255), 255);
-      // p.fill(p.map(i * j, 0, ROWS * COLUMNS, 0, 255));
+      p.fill(p.map(i * j, 0, config.rows * config.columns, 0, 255), p.map(i * j, 0, config.rows * config.columns, 0, 255), 255);
+      // p.fill(p.map(i * j, 0, config.rows * config.columns, 0, 255));
 
-      // p.rect(j * WIDTH_STEP, i * HEIGHT_STEP, WIDTH_STEP, HEIGHT_STEP);
+      // p.rect(i * WIDTH_STEP, j * HEIGHT_STEP, WIDTH_STEP, HEIGHT_STEP);
 
       p.fill(0);
 
@@ -57,8 +69,8 @@ const sketch = (p) => {
 
         // draw ellipse for each point
         p.ellipse(
-          j * WIDTH_STEP + x * (WIDTH_STEP / COLUMNS) + WIDTH_STEP / COLUMNS / 2,
-          i * HEIGHT_STEP + y * (HEIGHT_STEP / ROWS) + HEIGHT_STEP / ROWS / 2,
+          i * WIDTH_STEP + x * (WIDTH_STEP / config.columns) + WIDTH_STEP / config.columns / 2,
+          j * HEIGHT_STEP + y * (HEIGHT_STEP / config.rows) + HEIGHT_STEP / config.rows / 2,
           2
         );
       });
@@ -74,17 +86,17 @@ const sketch = (p) => {
       p.fill(0);
 
       pointsToDraw.forEach(({ x, y }, index) => {
-        const rectX = j * WIDTH_STEP + x * (WIDTH_STEP / COLUMNS),
-              rectY = i * HEIGHT_STEP + y * (HEIGHT_STEP / ROWS);
+        const rectX = i * WIDTH_STEP + x * (WIDTH_STEP / config.columns),
+              rectY = j * HEIGHT_STEP + y * (HEIGHT_STEP / config.rows);
 
         p.fill(0);
 
         p.rect(
-          rectX - PADDING,
-          rectY - PADDING,
-          WIDTH_STEP / COLUMNS + PADDING * 2,
-          HEIGHT_STEP / ROWS + PADDING * 2,
-          // p.map(count, 0, points.length, 0, WIDTH_STEP / COLUMNS)
+          rectX - config.padding,
+          rectY - config.padding,
+          WIDTH_STEP / config.columns + config.padding * 2,
+          HEIGHT_STEP / config.rows + config.padding * 2,
+          // p.map(count, 0, points.length, 0, WIDTH_STEP / config.columns)
           0
         );
 
@@ -99,6 +111,15 @@ const sketch = (p) => {
     p.createCanvas(WIDTH, HEIGHT);
 
     createPoints();
+
+    gui.onFinishChange(event => {
+      // event.object     // object that was modified
+      // event.property   // string, name of property
+      // event.value      // new value of controller
+      // event.controller // controller that was modified
+
+      createPoints();
+    });
   }
 
   p.draw = () => {
