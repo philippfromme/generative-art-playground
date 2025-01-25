@@ -2,17 +2,7 @@ import P5 from 'p5';
 
 import GUI from 'lil-gui'; 
 
-const config = {
-  rows: 7,
-  columns: 7,
-  padding: 1
-};
-
-const gui = new GUI();
-
-gui.add(config, 'rows', 1, 10, 1);
-gui.add(config, 'columns', 1, 10, 1);
-gui.add(config, 'padding', 0, 10, 1);
+let gui;
 
 const WIDTH = 800,
       HEIGHT = 800;
@@ -20,6 +10,18 @@ const WIDTH = 800,
 let points = [];
 
 const sketch = (p) => {
+  const config = {
+    rows: 7,
+    columns: 7,
+    padding: 1
+  };
+  
+  gui = new GUI();
+  
+  gui.add(config, 'rows', 1, 10, 1);
+  gui.add(config, 'columns', 1, 10, 1);
+  gui.add(config, 'padding', 0, 10, 1);
+
   let drawn = false;
 
   const createPoints = () => {
@@ -147,6 +149,8 @@ function render(node) {
 
   return () => {
     instance.remove();
+
+    gui.destroy();
   };
 }
 
