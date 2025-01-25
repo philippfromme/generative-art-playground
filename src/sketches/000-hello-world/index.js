@@ -1,5 +1,19 @@
 import P5 from "p5";
 
+import GUI from 'lil-gui'; 
+
+const config = {
+  rotationSpeed: 1,
+  radius: 1,
+  tubeRadius: 1
+};
+
+const gui = new GUI();
+
+gui.add(config, 'rotationSpeed', 1, 10, 1);
+gui.add(config, 'radius', 0.1, 2, 0.1);
+gui.add(config, 'tubeRadius', 0.1, 2, 0.1);
+
 const sketch = (p) => {
   p.setup = () => {
     p.createCanvas(p.windowWidth, p.windowHeight, p.WEBGL);
@@ -11,12 +25,16 @@ const sketch = (p) => {
     p.translate(0, 0, 0); // origin is at center of p
     p.normalMaterial();
     p.push();
-    p.rotateZ(p.frameCount * 0.01);
-    p.rotateX(p.frameCount * 0.01);
-    p.rotateY(p.frameCount * 0.01);
+
+    const rotationSpeed = p.map(config.rotationSpeed, 1, 10, 0.005, 0.1);
+
+    p.rotateZ(p.frameCount * rotationSpeed);
+    p.rotateX(p.frameCount * rotationSpeed);
+    p.rotateY(p.frameCount * rotationSpeed);
+
     p.torus(
-      Math.min(p.windowWidth, p.windowHeight) / 4,
-      Math.min(p.windowWidth, p.windowHeight) / 12
+      Math.min(p.windowWidth, p.windowHeight) / 4 * config.radius,
+      Math.min(p.windowWidth, p.windowHeight) / 12 * config.tubeRadius
     );
     p.pop();
   };
