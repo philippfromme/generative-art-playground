@@ -19,9 +19,9 @@ const sketches = [
     load: () => import('./002-dots/index.js')
   },
   {
-    id: '002-dots',
+    id: '003-deepseek',
     thumbnail: null,
-    load: () => import('./002-dots/index.js')
+    load: () => import('./003-deepseek/index.js')
   },
   {
     id: '002-dots',

@@ -6,6 +6,7 @@
   "scripts": {
     "build": "webpack --mode=production --node-env production",
     "start": "webpack serve --open --mode=development --node-env development",
+    "start:server": "cross-env NODE_ENV=development node server.js",
     "deploy": "npm run build && gh-pages -d dist"
   },
   "keywords": [
@@ -19,11 +20,14 @@
     "@babel/core": "^7.18.10",
     "@babel/preset-env": "^7.18.10",
     "babel-loader": "^8.2.5",
+    "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "css-loader": "^6.7.1",
+    "express": "^4.21.2",
     "gh-pages": "^4.0.0",
     "html-webpack-plugin": "^5.5.0",
     "lil-gui": "^0.20.0",
+    "ollama": "^0.5.12",
     "p5": "^1.7.0",
     "raw-loader": "^4.0.2",
     "style-loader": "^3.3.3",
