@@ -6,6 +6,7 @@
   "scripts": {
     "build": "webpack --mode=production --node-env production",
     "start": "webpack serve --open --mode=development --node-env development",
+    "start:server": "cross-env NODE_ENV=development node server.js",
     "deploy": "npm run build && gh-pages -d dist"
   },
   "keywords": [
@@ -21,6 +22,8 @@
     "babel-loader": "^8.2.5",
     "cross-env": "^7.0.3",
     "css-loader": "^6.7.1",
+    "delaunator": "^5.0.1",
+    "express": "^4.21.2",
     "gh-pages": "^4.0.0",
     "html-webpack-plugin": "^5.5.0",
     "lil-gui": "^0.20.0",

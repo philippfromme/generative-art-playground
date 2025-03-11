@@ -1,10 +1,10 @@
-import P5 from 'p5';
+import P5 from "p5";
 
 const WIDTH = 800,
-      HEIGHT = 800,
-      MIN_DEPTH = 1,
-      MAX_DEPTH = 20,
-      PROBABILITY = 0.7;
+  HEIGHT = 800,
+  MIN_DEPTH = 1,
+  MAX_DEPTH = 20,
+  PROBABILITY = 0.7;
 
 let subdivisions = [];
 
@@ -18,41 +18,42 @@ const sketch = (p) => {
       x: 0,
       y: 0,
       width: WIDTH,
-      height: HEIGHT
+      height: HEIGHT,
     };
 
-    subdivisions = [
-      initialSubdivision
-    ];
+    subdivisions = [initialSubdivision];
 
     const createSubdivision = (subDivision, depth) => {
-      if (depth > MAX_DEPTH || (depth >= MIN_DEPTH && p.random() > PROBABILITY)) {
+      if (
+        depth > MAX_DEPTH ||
+        (depth >= MIN_DEPTH && p.random() > PROBABILITY)
+      ) {
         return;
       }
 
-      console.log('createSubdivision', subDivision, depth);
+      console.log("createSubdivision", subDivision, depth);
 
       depth++;
 
-      const isHorizontal = p.random([ true, false ]);
-      console.log('isHorizontal', isHorizontal);
+      const isHorizontal = p.random([true, false]);
+      console.log("isHorizontal", isHorizontal);
 
       let min, max;
 
       if (isHorizontal) {
         min = subDivision.x;
-        max = subDivision.x + subDivision.width
+        max = subDivision.x + subDivision.width;
       } else {
         min = subDivision.y;
-        max = subDivision.y + subDivision.height
+        max = subDivision.y + subDivision.height;
       }
 
       const value = p.random(min, max);
 
-      console.log('value', value);
+      console.log("value", value);
 
       const leftSubdivision = {
-        ...subDivision
+        ...subDivision,
       };
 
       if (isHorizontal) {
@@ -61,30 +62,32 @@ const sketch = (p) => {
         leftSubdivision.height = value - subDivision.y;
       }
 
-      console.log('left subdivision', leftSubdivision);
+      console.log("left subdivision", leftSubdivision);
 
       subdivisions.push(leftSubdivision);
 
       createSubdivision(leftSubdivision, depth);
 
       const rightSubdivision = {
-        ...subDivision
+        ...subDivision,
       };
 
       if (isHorizontal) {
-        rightSubdivision.width = rightSubdivision.x + rightSubdivision.width - value;
+        rightSubdivision.width =
+          rightSubdivision.x + rightSubdivision.width - value;
         rightSubdivision.x = value;
       } else {
-        rightSubdivision.height = rightSubdivision.y + rightSubdivision.height - value;
+        rightSubdivision.height =
+          rightSubdivision.y + rightSubdivision.height - value;
         rightSubdivision.y = value;
       }
 
-      console.log('right subdivision', rightSubdivision);
+      console.log("right subdivision", rightSubdivision);
 
       subdivisions.push(rightSubdivision);
 
       createSubdivision(rightSubdivision, depth);
-    }
+    };
 
     createSubdivision(initialSubdivision, 0);
   };
@@ -98,7 +101,7 @@ const sketch = (p) => {
 
     if (isBlackRect) p.fill(0);
     p.rect(x, y, width, height);
-    
+
     if (isBlackRect) p.fill(255);
     p.ellipse(x + width / 2, y + height / 2, width, height);
 
@@ -109,7 +112,7 @@ const sketch = (p) => {
     p.createCanvas(WIDTH, HEIGHT);
 
     createSubdivisions();
-  }
+  };
 
   p.draw = () => {
     if (!drawn) {
@@ -121,16 +124,15 @@ const sketch = (p) => {
 
       drawn = true;
     }
-  }
+  };
 
   p.keyPressed = () => {
-
     // SPACE
     if (p.keyCode === 32) {
       createSubdivisions();
     }
-  }
-}
+  };
+};
 
 function render(node) {
   const instance = new P5(sketch, node);

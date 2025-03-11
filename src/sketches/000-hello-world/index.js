@@ -1,6 +1,6 @@
 import P5 from "p5";
 
-import GUI from 'lil-gui';
+import GUI from "lil-gui";
 
 let gui;
 
@@ -8,14 +8,14 @@ const sketch = (p) => {
   const config = {
     rotationSpeed: 1,
     radius: 1,
-    tubeRadius: 1
+    tubeRadius: 1,
   };
-  
+
   gui = new GUI();
-  
-  gui.add(config, 'rotationSpeed', 1, 10, 1);
-  gui.add(config, 'radius', 0.1, 2, 0.1);
-  gui.add(config, 'tubeRadius', 0.1, 2, 0.1);
+
+  gui.add(config, "rotationSpeed", 1, 10, 1);
+  gui.add(config, "radius", 0.1, 2, 0.1);
+  gui.add(config, "tubeRadius", 0.1, 2, 0.1);
 
   p.setup = () => {
     p.createCanvas(p.windowWidth, p.windowHeight, p.WEBGL);
@@ -35,8 +35,8 @@ const sketch = (p) => {
     p.rotateY(p.frameCount * rotationSpeed);
 
     p.torus(
-      Math.min(p.windowWidth, p.windowHeight) / 4 * config.radius,
-      Math.min(p.windowWidth, p.windowHeight) / 12 * config.tubeRadius
+      (Math.min(p.windowWidth, p.windowHeight) / 4) * config.radius,
+      (Math.min(p.windowWidth, p.windowHeight) / 12) * config.tubeRadius
     );
     p.pop();
   };

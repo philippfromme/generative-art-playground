@@ -1,11 +1,11 @@
-import P5 from 'p5';
+import P5 from "p5";
 
-import GUI from 'lil-gui'; 
+import GUI from "lil-gui";
 
 let gui;
 
 const WIDTH = 800,
-      HEIGHT = 800;
+  HEIGHT = 800;
 
 let points = [];
 
@@ -13,14 +13,14 @@ const sketch = (p) => {
   const config = {
     rows: 7,
     columns: 7,
-    padding: 1
+    padding: 1,
   };
-  
+
   gui = new GUI();
-  
-  gui.add(config, 'rows', 1, 10, 1);
-  gui.add(config, 'columns', 1, 10, 1);
-  gui.add(config, 'padding', 0, 10, 1);
+
+  gui.add(config, "rows", 1, 10, 1);
+  gui.add(config, "columns", 1, 10, 1);
+  gui.add(config, "padding", 0, 10, 1);
 
   let drawn = false;
 
@@ -33,7 +33,7 @@ const sketch = (p) => {
       for (let j = 0; j < config.columns; j++) {
         points.push({
           x: j,
-          y: i
+          y: i,
         });
       }
     }
@@ -42,14 +42,14 @@ const sketch = (p) => {
     points.sort(() => p.random(-1, 1));
 
     console.log(points);
-  }
+  };
 
   const drawPoints = () => {
     const WIDTH_STEP = WIDTH / config.columns,
-          HEIGHT_STEP = HEIGHT / config.rows;
+      HEIGHT_STEP = HEIGHT / config.rows;
 
-    console.log('width step', WIDTH_STEP);
-    console.log('height step', HEIGHT_STEP);
+    console.log("width step", WIDTH_STEP);
+    console.log("height step", HEIGHT_STEP);
 
     p.noStroke();
     p.fill(0);
@@ -59,7 +59,11 @@ const sketch = (p) => {
       const i = Math.floor(count / config.rows);
 
       // gradient fill using rgb
-      p.fill(p.map(i * j, 0, config.rows * config.columns, 0, 255), p.map(i * j, 0, config.rows * config.columns, 0, 255), 255);
+      p.fill(
+        p.map(i * j, 0, config.rows * config.columns, 0, 255),
+        p.map(i * j, 0, config.rows * config.columns, 0, 255),
+        255
+      );
       // p.fill(p.map(i * j, 0, config.rows * config.columns, 0, 255));
 
       // p.rect(i * WIDTH_STEP, j * HEIGHT_STEP, WIDTH_STEP, HEIGHT_STEP);
@@ -68,11 +72,14 @@ const sketch = (p) => {
 
       // debug
       points.forEach(({ x, y }) => {
-
         // draw ellipse for each point
         p.ellipse(
-          i * WIDTH_STEP + x * (WIDTH_STEP / config.columns) + WIDTH_STEP / config.columns / 2,
-          j * HEIGHT_STEP + y * (HEIGHT_STEP / config.rows) + HEIGHT_STEP / config.rows / 2,
+          i * WIDTH_STEP +
+            x * (WIDTH_STEP / config.columns) +
+            WIDTH_STEP / config.columns / 2,
+          j * HEIGHT_STEP +
+            y * (HEIGHT_STEP / config.rows) +
+            HEIGHT_STEP / config.rows / 2,
           2
         );
       });
@@ -89,7 +96,7 @@ const sketch = (p) => {
 
       pointsToDraw.forEach(({ x, y }, index) => {
         const rectX = i * WIDTH_STEP + x * (WIDTH_STEP / config.columns),
-              rectY = j * HEIGHT_STEP + y * (HEIGHT_STEP / config.rows);
+          rectY = j * HEIGHT_STEP + y * (HEIGHT_STEP / config.rows);
 
         p.fill(0);
 
@@ -114,7 +121,7 @@ const sketch = (p) => {
 
     createPoints();
 
-    gui.onFinishChange(event => {
+    gui.onFinishChange((event) => {
       // event.object     // object that was modified
       // event.property   // string, name of property
       // event.value      // new value of controller
@@ -122,7 +129,7 @@ const sketch = (p) => {
 
       createPoints();
     });
-  }
+  };
 
   p.draw = () => {
     if (!drawn) {
@@ -133,16 +140,15 @@ const sketch = (p) => {
 
       drawn = true;
     }
-  }
+  };
 
   p.keyPressed = () => {
-
     // SPACE
     if (p.keyCode === 32) {
       createPoints();
     }
-  }
-}
+  };
+};
 
 function render(node) {
   const instance = new P5(sketch, node);
