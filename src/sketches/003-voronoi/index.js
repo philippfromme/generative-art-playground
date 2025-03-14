@@ -4,6 +4,8 @@ import Delaunator from "delaunator";
 
 import GUI from "lil-gui";
 
+import randomColor from "randomcolor";
+
 let gui;
 
 const config = {
@@ -15,6 +17,8 @@ const config = {
 };
 
 let mousePressed = false;
+
+const colorMap = new Map();
 
 function createRandomPoints(n, p) {
   const points = [];
@@ -128,6 +132,27 @@ const sketch = (p) => {
 
     const { coords, triangles, halfedges, hull } = delaunay;
 
+    forEachVoronoiCell(coords, delaunay, (points, vertices) => {
+      const hash = simpleHash(JSON.stringify(points));
+
+      if (!colorMap.has(hash)) {
+        colorMap.set(
+          hash,
+          randomColor({ luminosity: "light", hue: "monochrome" })
+        );
+      }
+
+      p.fill(colorMap.get(hash));
+      p.noStroke();
+      p.beginShape();
+
+      for (const [x, y] of vertices) {
+        p.vertex(x, y);
+      }
+
+      p.endShape(p.CLOSE);
+    });
+
     forEachVoronoiEdge(coords, delaunay, (e, p1, p2) => {
       config.drawVoronoi && drawLine(p1[0], p1[1], p2[0], p2[1], "red");
     });
@@ -229,7 +254,7 @@ const sketch = (p) => {
       }
     }
 
-    if (mousePressed) drawPoint(p.mouseX, p.mouseY);
+    if (config.drawDelaunay && mousePressed) drawPoint(p.mouseX, p.mouseY);
   };
 
   p.windowResized = () => {
@@ -550,4 +575,92 @@ function forEachVoronoiEdge(points, delaunay, callback) {
       callback(e, p, q);
     }
   }
+}
+
+/*
+ * Loop over edges around point and call callback with edge index, point p and point q.
+ *
+ * @example
+ * edgesAroundPoint(delaunay, 0); // [0, 1, 2]
+ * edgesAroundPoint(delaunay, 1); // [3, 4, 5]
+ * edgesAroundPoint(delaunay, 2); // [6, 7, 8]
+ *
+ * @param {Delaunator} delaunay - Delaunator instance.
+ * @param {number} start - Start edge index.
+ *
+ * @returns {Array<number>} - Edges around point.
+ */
+function edgesAroundPoint(delaunay, start) {
+  const result = [];
+
+  let incoming = start;
+
+  do {
+    result.push(incoming);
+
+    const outgoing = nextHalfedge(incoming);
+
+    incoming = delaunay.halfedges[outgoing];
+  } while (incoming !== -1 && incoming !== start);
+
+  return result;
+}
+
+/*
+ * Loop over Voronoi cells and call callback with point id and vertices.
+ *
+ * @example
+ * forEachVoronoiCell(points, delaunay, (p, vertices) => {
+ *  console.log(p, vertices);
+ * }
+ *
+ * @param {Array<{ x: number, y: number }>} points - Array of points.
+ * @param {Delaunator} delaunay - Delaunator instance.
+ * @param {Function} callback - Callback function.
+ */
+function forEachVoronoiCell(points, delaunay, callback) {
+  const index = new Map(); // point id to half-edge id
+
+  for (let e = 0; e < delaunay.triangles.length; e++) {
+    const endpoint = delaunay.triangles[nextHalfedge(e)];
+
+    if (!index.has(endpoint) || delaunay.halfedges[e] === -1) {
+      index.set(endpoint, e);
+    }
+  }
+
+  for (let p = 0; p < points.length; p++) {
+    const incoming = index.get(p);
+
+    const edges = edgesAroundPoint(delaunay, incoming);
+
+    const triangles = edges.map(triangleOfEdge);
+
+    const vertices = triangles.map((t) => triangleCenter(points, delaunay, t));
+
+    callback(p, vertices);
+  }
+}
+
+/*
+ * Get hash of string.
+ *
+ * @example
+ * simpleHash("hello"); // 99162322
+ *
+ * @param {string} str - String.
+ *
+ * @returns {number} - Hash of string.
+ */
+function simpleHash(str) {
+  let hash = 0;
+
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+
+    hash = (hash << 5) - hash + char;
+    hash |= 0; // Convert to 32-bit integer
+  }
+
+  return hash >>> 0; // Convert to unsigned integer
 }

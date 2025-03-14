@@ -1,10 +1,15 @@
+const path = require("path");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
+  mode: "development",
+  devtool: "source-map",
   entry: "./src/index.js",
   output: {
-    path: __dirname + "/dist",
+    path: path.resolve(__dirname, "dist"),
     filename: "bundle.js",
+    publicPath: "/",
   },
   module: {
     rules: [
@@ -15,20 +20,40 @@ module.exports = {
       },
       {
         test: /\.(png|jpg|gif)$/i,
-        use: [
-          {
-            loader: "url-loader",
-            options: {
-              limit: 8192,
-            },
+        type: "asset",
+        parser: {
+          dataUrlCondition: {
+            maxSize: 8192,
           },
-        ],
+        },
+      },
+      {
+        test: /\.(glsl|vert|frag|fx)$/,
+        type: "asset/source",
       },
     ],
   },
+  devServer: {
+    static: {
+      directory: path.resolve(__dirname, "dist"),
+    },
+    historyApiFallback: true,
+  },
   plugins: [
     new HtmlWebpackPlugin({
-      template: "./src/index.html",
+      template: "src/index.html",
+      filename: "index.html",
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: "src/sketches",
+          to: "sketches",
+          globOptions: {
+            ignore: ["**/*.js"],
+          },
+        },
+      ],
     }),
   ],
 };
