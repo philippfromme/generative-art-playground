@@ -9,7 +9,7 @@ import randomColor from "randomcolor";
 let gui;
 
 const config = {
-  numPoints: 4,
+  numPoints: 20,
   drawDelaunay: true,
   drawCircumcenter: true,
   drawCircumcircle: true,
@@ -78,7 +78,7 @@ const sketch = (p) => {
   p.setup = () => {
     gui = new GUI();
 
-    gui.add(config, "numPoints", 1, 100, 1);
+    gui.add(config, "numPoints", 10, 1000, 10);
 
     gui.add(config, "drawDelaunay");
     gui.add(config, "drawCircumcenter");
@@ -136,10 +136,7 @@ const sketch = (p) => {
       const hash = simpleHash(JSON.stringify(points));
 
       if (!colorMap.has(hash)) {
-        colorMap.set(
-          hash,
-          randomColor({ luminosity: "light", hue: "monochrome" })
-        );
+        colorMap.set(hash, Math.random() > 0.5 ? "white" : "black");
       }
 
       p.fill(colorMap.get(hash));

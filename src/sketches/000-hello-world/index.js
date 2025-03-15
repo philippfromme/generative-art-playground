@@ -92,7 +92,7 @@ const sketch = (p) => {
     torus.computeNormals(p.FLAT);
     // torus.computeNormals(p.SMOOTH);
 
-    // p.model(torus);
+    p.model(torus);
 
     p.rotateZ(p.frameCount * rotationSpeed);
     p.rotateX(p.frameCount * rotationSpeed);
@@ -128,7 +128,7 @@ const sketch = (p) => {
     // make model flat shaded
     model.computeNormals(p.FLAT);
     p.texture(textureColor);
-    p.model(model);
+    // p.model(model);
 
     p.pop();
 
