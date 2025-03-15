@@ -24,6 +24,11 @@ const sketches = [
     thumbnail: thumbnail003,
     load: () => import("./003-voronoi/index.js"),
   },
+  {
+    id: "004-webgl",
+    thumbnail: null,
+    load: () => import("./004-webgl"),
+  },
 ];
 
 export { sketches };
