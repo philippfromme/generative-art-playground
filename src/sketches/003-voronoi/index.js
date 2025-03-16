@@ -9,11 +9,11 @@ import randomColor from "randomcolor";
 let gui;
 
 const config = {
-  numPoints: 20,
-  drawDelaunay: true,
-  drawCircumcenter: true,
-  drawCircumcircle: true,
-  drawVoronoi: true,
+  numPoints: 500,
+  drawDelaunay: false,
+  drawCircumcenter: false,
+  drawCircumcircle: false,
+  drawVoronoi: false,
 };
 
 let mousePressed = false;

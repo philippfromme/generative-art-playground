@@ -18,6 +18,7 @@
   "dependencies": {
     "@babel/core": "^7.18.10",
     "@babel/preset-env": "^7.18.10",
+    "alea": "^1.0.1",
     "babel-loader": "^8.2.5",
     "copy-webpack-plugin": "^13.0.0",
     "cross-env": "^7.0.3",
@@ -31,6 +32,7 @@
     "p5": "^1.11.3",
     "randomcolor": "^0.6.2",
     "raw-loader": "^4.0.2",
+    "simplex-noise": "^4.0.3",
     "style-loader": "^3.3.3",
     "url-loader": "^4.1.1",
     "webpack": "^5.75.0",
