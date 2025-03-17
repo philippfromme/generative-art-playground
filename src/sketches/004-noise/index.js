@@ -7,6 +7,7 @@ import GUI from "lil-gui";
 function render(node) {
   const DEFAULT_NOISE_CONFIG = {
     canvasWidth: 256,
+    canvasHeight: 256,
     seed: 0, // Random seed for reproducible noise
     scale: 1, // Zoom level of noise (1 = full pattern)
     octaves: 5, // Number of noise layers combined
@@ -21,9 +22,11 @@ function render(node) {
   const canvas = document.createElement("canvas");
 
   canvas.width = DEFAULT_NOISE_CONFIG.canvasWidth;
-  canvas.height = canvas.width;
+  canvas.height = DEFAULT_NOISE_CONFIG.canvasHeight;
 
   function createNoise2DData(width, height, config = DEFAULT_NOISE_CONFIG) {
+    config = { ...DEFAULT_NOISE_CONFIG, ...config };
+
     const randomFunction = alea(config.seed);
 
     const noiseFunction = createNoise2D(randomFunction);
@@ -56,10 +59,17 @@ function render(node) {
       }
     }
 
+    console.log(data, data.length);
+
     return data;
   }
 
   function renderNoise2DDataToCanvas(canvas, config = DEFAULT_NOISE_CONFIG) {
+    config = { ...DEFAULT_NOISE_CONFIG, ...config };
+
+    canvas.width = config.canvasWidth;
+    canvas.height = config.canvasHeight;
+
     const ctx = canvas.getContext("2d");
 
     const noise = createNoise2DData(canvas.width, canvas.height, config);
@@ -80,6 +90,7 @@ function render(node) {
 
   const config = {
     canvasWidth: 256,
+    canvasHeight: 256,
     seed: 0,
     scale: 1, // scale the frequency of the noise
     octaves: 6, // octaves is the number of layers of noise
@@ -93,7 +104,8 @@ function render(node) {
 
   const gui = new GUI();
 
-  gui.add(config, "canvasWidth", [16, 32, 64, 128, 256, 512, 1024]);
+  gui.add(config, "canvasWidth", [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]);
+  gui.add(config, "canvasHeight", [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]);
   gui.add(config, "scale", 0.1, 10).step(0.1);
   gui.add(config, "octaves", 1, 20).step(1);
   gui.add(config, "persistence", 0.1, 2).step(0.1);
