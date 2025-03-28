@@ -3,6 +3,7 @@ import thumbnail001 from "./001-subdivision/thumbnail.png";
 import thumbnail002 from "./002-dots/thumbnail.png";
 import thumbnail003 from "./003-voronoi/thumbnail.png";
 import thumbnail004 from "./004-noise/thumbnail.png";
+import thumbnail005 from "./005-greybox-texture/thumbnail.png";
 
 const sketches = [
   {
@@ -29,6 +30,11 @@ const sketches = [
     id: "004-noise",
     thumbnail: thumbnail004,
     load: () => import("./004-noise/index.js"),
+  },
+  {
+    id: "005-greybox-texture",
+    thumbnail: thumbnail005,
+    load: () => import("./005-greybox-texture/index.js"),
   },
 ];
 
