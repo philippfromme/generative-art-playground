@@ -36,6 +36,11 @@ const sketches = [
     thumbnail: thumbnail005,
     load: () => import("./005-greybox-texture/index.js"),
   },
+  {
+    id: "006-dithering",
+    thumbnail: null,
+    load: () => import("./006-dithering/index.js"),
+  },
 ];
 
 export { sketches };

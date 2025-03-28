@@ -18,6 +18,8 @@
   "dependencies": {
     "@babel/core": "^7.18.10",
     "@babel/preset-env": "^7.18.10",
+    "@babylonjs/core": "^8.0.1",
+    "@babylonjs/inspector": "^8.0.1",
     "alea": "^1.0.1",
     "babel-loader": "^8.2.5",
     "copy-webpack-plugin": "^13.0.0",
