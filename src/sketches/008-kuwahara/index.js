@@ -4,7 +4,7 @@ import { NormalMaterial } from "@babylonjs/materials";
 
 import GUI from "lil-gui";
 
-import frag from "./shaders/frag.glsl";
+import kuwaharaFrag from "./shaders/kuwahara-frag.glsl";
 
 function render(node) {
   const canvas = document.createElement("canvas");
@@ -31,9 +31,14 @@ function render(node) {
   camera.setPosition(new BABYLON.Vector3(0, 5, -10));
 
   camera.minZ = 0.1;
-  camera.maxZ = 20;
+  camera.maxZ = 50;
+
+  camera.lowerBetaLimit = 0.1;
+  camera.upperBetaLimit = Math.PI / 2 - 0.2;
 
   camera.attachControl(canvas, true);
+
+  camera.wheelPrecision = 50;
 
   const light = new BABYLON.DirectionalLight(
     "light",
@@ -43,20 +48,28 @@ function render(node) {
   light.position = new BABYLON.Vector3(0, 10, 0);
   light.intensity = 0.5;
 
-  const light2 = new BABYLON.DirectionalLight(
-    "light",
-    new BABYLON.Vector3(1, -1, -1),
+  // const light2 = new BABYLON.DirectionalLight(
+  //   "light",
+  //   new BABYLON.Vector3(1, -1, -1),
+  //   scene
+  // );
+  // light2.position = new BABYLON.Vector3(0, 10, 0);
+  // light2.intensity = 0.5;
+
+  const hemisphericLight = new BABYLON.HemisphericLight(
+    "hemisphericLight",
+    new BABYLON.Vector3(0, 1, 0),
     scene
   );
-  light2.position = new BABYLON.Vector3(0, 10, 0);
-  light2.intensity = 0.5;
+
+  hemisphericLight.intensity = 0.1;
 
   const sphere = BABYLON.MeshBuilder.CreateSphere(
     "sphere",
-    { diameter: 1, segments: 2 },
+    { diameter: 1, segments: 16 },
     scene
   );
-  sphere.convertToFlatShadedMesh();
+  // sphere.convertToFlatShadedMesh();
 
   sphere.position = new BABYLON.Vector3(2, 2, 2);
 
@@ -80,8 +93,8 @@ function render(node) {
     {
       radius: 0.5,
       tube: 0.2,
-      radialSegments: 16,
-      tubularSegments: 8,
+      radialSegments: 64,
+      tubularSegments: 32,
       twist: 2,
       p: 2,
       q: 3,
@@ -89,7 +102,7 @@ function render(node) {
     },
     scene
   );
-  torus.convertToFlatShadedMesh();
+  // torus.convertToFlatShadedMesh();
 
   torus.position = new BABYLON.Vector3(0, 2, 0);
 
@@ -100,12 +113,12 @@ function render(node) {
 
   const ground = BABYLON.MeshBuilder.CreateGroundFromHeightMap(
     "gdhm",
-    "sketches/006-shading/heightMap.png",
+    "sketches/008-kuwahara/crater.ppm",
     {
       width: 10,
       height: 10,
-      subdivisions: 10,
-      maxHeight: 1.5,
+      subdivisions: 32,
+      maxHeight: 1,
       onReady: (mesh) => mesh.convertToFlatShadedMesh(),
     }
   );
@@ -115,9 +128,16 @@ function render(node) {
   groundMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
   ground.material = groundMaterial;
 
+  const groundPlane = BABYLON.MeshBuilder.CreateGround(
+    "ground",
+    { width: 1000, height: 1000 },
+    scene
+  );
+  groundPlane.material = groundMaterial;
+
   const shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
 
-  shadowGenerator.bias = 0.1;
+  shadowGenerator.bias = 0.01;
   shadowGenerator.usePoissonSampling = true;
 
   shadowGenerator.getShadowMap().renderList.push(sphere);
@@ -130,28 +150,28 @@ function render(node) {
   torus.receiveShadows = true;
   ground.receiveShadows = true;
 
-  const shadowGenerator2 = new BABYLON.ShadowGenerator(1024, light2);
+  // const shadowGenerator2 = new BABYLON.ShadowGenerator(1024, light2);
 
-  shadowGenerator2.bias = 0.1;
-  shadowGenerator.usePoissonSampling = true;
+  // shadowGenerator2.bias = 0.1;
+  // shadowGenerator.usePoissonSampling = true;
 
-  shadowGenerator2.getShadowMap().renderList.push(sphere);
-  shadowGenerator2.getShadowMap().renderList.push(box);
-  shadowGenerator2.getShadowMap().renderList.push(torus);
-  shadowGenerator2.getShadowMap().renderList.push(ground);
+  // shadowGenerator2.getShadowMap().renderList.push(sphere);
+  // shadowGenerator2.getShadowMap().renderList.push(box);
+  // shadowGenerator2.getShadowMap().renderList.push(torus);
+  // shadowGenerator2.getShadowMap().renderList.push(ground);
 
-  sphere.receiveShadows = true;
-  box.receiveShadows = true;
-  torus.receiveShadows = true;
-  ground.receiveShadows = true;
+  // sphere.receiveShadows = true;
+  // box.receiveShadows = true;
+  // torus.receiveShadows = true;
+  // ground.receiveShadows = true;
 
-  BABYLON.Effect.ShadersStore["customFragmentShader"] = frag;
+  BABYLON.Effect.ShadersStore["customFragmentShader"] = kuwaharaFrag;
 
   const postProcess = new BABYLON.PostProcess(
     "custom",
     "custom",
     null,
-    ["resolution"],
+    ["resolution", "kernelSize", "radius"],
     1.0,
     camera
   );
@@ -161,37 +181,79 @@ function render(node) {
       "resolution",
       new BABYLON.Vector2(engine.getRenderWidth(), engine.getRenderHeight())
     );
+    effect.setInt("kernelSize", 6);
+    effect.setInt("radius", 10);
   };
+
+  let apollo;
+
+  BABYLON.SceneLoader.ImportMeshAsync(
+    "",
+    "sketches/008-kuwahara/apollo.glb",
+    "",
+    scene
+  ).then((result) => {
+    console.log(result);
+
+    result.meshes.forEach((mesh) => {
+      if (mesh.id === "__root__") {
+        apollo = mesh;
+
+        mesh.scaling.scaleInPlace(0.75);
+      }
+
+      // mesh.convertToFlatShadedMesh();
+
+      mesh.receiveShadows = true;
+
+      shadowGenerator.getShadowMap().renderList.push(mesh);
+      // shadowGenerator2.getShadowMap().renderList.push(mesh);
+    });
+  });
 
   scene.registerBeforeRender(() => {
     const time = performance.now() * 0.001;
 
-    const radius = 2;
+    const radius = 4;
     const speed = 1;
     const angle = time * speed;
-    const x = Math.cos(angle) * radius;
-    const z = Math.sin(angle) * radius;
-    sphere.position.x = x;
-    sphere.position.z = z;
-    box.position.x = -x;
-    box.position.z = -z;
+
+    sphere.position.x = radius * Math.cos(angle);
+    sphere.position.z = radius * Math.sin(angle);
+
+    box.position.x = radius * Math.cos(angle + (2 * Math.PI) / 3);
+    box.position.z = radius * Math.sin(angle + (2 * Math.PI) / 3);
+
+    torus.position.x = radius * Math.cos(angle + (4 * Math.PI) / 3);
+    torus.position.z = radius * Math.sin(angle + (4 * Math.PI) / 3);
+
     sphere.rotation.x += 0.01;
     sphere.rotation.y += 0.01;
     sphere.rotation.z += 0.01;
     box.rotation.x += 0.01;
     box.rotation.y += 0.01;
     box.rotation.z += 0.01;
-
-    const height = 0.5;
-    const speed2 = 2;
-    const angle2 = time * speed2;
-    sphere.position.y = Math.sin(angle2) * height + 2;
-    box.position.y = Math.cos(angle2) * height + 2;
-
-    torus.position.y = Math.sin(angle2) * height + 3;
     torus.rotation.x += 0.01;
     torus.rotation.y += 0.01;
     torus.rotation.z += 0.01;
+
+    const height = 0.5;
+    const speed2 = 2;
+
+    const angle2 = time * speed2;
+    sphere.position.y = Math.sin(angle2) * height + 2;
+    box.position.y = Math.cos(angle + (2 * Math.PI) / 3) * height + 2;
+    torus.position.y = Math.sin(angle + (4 * Math.PI) / 3) * height + 2;
+
+    light.direction.x = Math.cos(angle) * 2;
+    light.direction.z = Math.sin(angle) * 2;
+
+    // light2.direction.x = Math.cos(angle + (2 * Math.PI) / 3) * 2;
+    // light2.direction.z = Math.sin(angle + (2 * Math.PI) / 3) * 2;
+
+    if (apollo) {
+      apollo.position.y = Math.sin(angle) * 0.2 + 1;
+    }
   });
 
   engine.runRenderLoop(function () {
