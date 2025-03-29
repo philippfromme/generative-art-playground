@@ -42,6 +42,11 @@ const sketches = [
     thumbnail: thumbnail006,
     load: () => import("./006-shading/index.js"),
   },
+  {
+    id: "007-dithering",
+    thumbnail: null,
+    load: () => import("./007-dithering/index.js"),
+  },
 ];
 
 export { sketches };
