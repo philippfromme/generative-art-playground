@@ -151,10 +151,24 @@ const sketch = (p) => {
 };
 
 function render(node) {
-  const instance = new P5(sketch, node);
+  const childNode = document.createElement("div");
+
+  childNode.style.width = "100%";
+  childNode.style.height = "100%";
+  childNode.style.position = "relative";
+  childNode.style.overflow = "hidden";
+  childNode.style.display = "flex";
+  childNode.style.justifyContent = "center";
+  childNode.style.alignItems = "center";
+
+  node.appendChild(childNode);
+
+  const instance = new P5(sketch, childNode);
 
   return () => {
     instance.remove();
+
+    childNode.remove();
 
     gui.destroy();
   };

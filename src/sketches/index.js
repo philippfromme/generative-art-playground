@@ -4,6 +4,7 @@ import thumbnail002 from "./002-dots/thumbnail.png";
 import thumbnail003 from "./003-voronoi/thumbnail.png";
 import thumbnail004 from "./004-noise/thumbnail.png";
 import thumbnail005 from "./005-greybox-texture/thumbnail.png";
+import thumbnail006 from "./006-shading/thumbnail.png";
 
 const sketches = [
   {
@@ -38,7 +39,7 @@ const sketches = [
   },
   {
     id: "006-shading",
-    thumbnail: null,
+    thumbnail: thumbnail006,
     load: () => import("./006-shading/index.js"),
   },
 ];

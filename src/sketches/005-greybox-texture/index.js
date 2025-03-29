@@ -101,7 +101,19 @@ function render(node) {
 
   render(canvas, config);
 
-  node.appendChild(canvas);
+  const childNode = document.createElement("div");
+
+  childNode.style.width = "100%";
+  childNode.style.height = "100%";
+  childNode.style.position = "relative";
+  childNode.style.overflow = "hidden";
+  childNode.style.display = "flex";
+  childNode.style.justifyContent = "center";
+  childNode.style.alignItems = "center";
+
+  node.appendChild(childNode);
+
+  childNode.appendChild(canvas);
 
   canvas.style.width = "512px";
   canvas.style.height = "512px";
@@ -109,7 +121,7 @@ function render(node) {
 
   const pre = document.createElement("pre");
 
-  node.appendChild(pre);
+  childNode.appendChild(pre);
 
   pre.textContent = JSON.stringify(config, null, 2);
 
@@ -148,8 +160,10 @@ function render(node) {
   return () => {
     gui.destroy();
 
-    node.removeChild(canvas);
-    node.removeChild(pre);
+    childNode.removeChild(canvas);
+    childNode.removeChild(pre);
+
+    node.removeChild(childNode);
   };
 }
 
