@@ -4,6 +4,8 @@ import { NormalMaterial } from "@babylonjs/materials";
 
 import GUI from "lil-gui";
 
+import frag from "./shaders/frag.glsl";
+
 function render(node) {
   const canvas = document.createElement("canvas");
   canvas.style.width = "100%";
@@ -98,7 +100,7 @@ function render(node) {
 
   const ground = BABYLON.MeshBuilder.CreateGroundFromHeightMap(
     "gdhm",
-    "sketches/006-dithering/heightMap.png",
+    "sketches/006-shading/heightMap.png",
     {
       width: 10,
       height: 10,
@@ -162,29 +164,13 @@ function render(node) {
   );
   scene.customRenderTargets.push(normalMapRenderTargetTexture);
 
-  BABYLON.Effect.ShadersStore["customFragmentShader"] = `
-    varying vec2 vUV;
-
-    uniform sampler2D textureSampler;
-    uniform sampler2D depthSampler;
-    uniform sampler2D normalSampler;
-    uniform float cameraNear;
-    uniform float cameraFar;
-
-    void main(void)
-    {
-      float depth = texture2D(depthSampler, vUV).r;
-      gl_FragColor = vec4(depth, depth, depth, 1.0);
-      gl_FragColor = texture2D(normalSampler, vUV);
-      // gl_FragColor = texture2D(textureSampler, vUV);
-    }
-    `;
+  BABYLON.Effect.ShadersStore["customFragmentShader"] = frag;
 
   const postProcess = new BABYLON.PostProcess(
     "custom",
     "custom",
     null,
-    ["depthSampler", "normalSampler", "cameraNear", "cameraFar"],
+    ["depthSampler", "normalSampler", "cameraNear", "cameraFar", "resolution"],
     1.0,
     camera
   );
@@ -194,6 +180,10 @@ function render(node) {
     effect.setFloat("cameraFar", camera.maxZ);
     effect.setTexture("depthSampler", depthTexture);
     effect.setTexture("normalSampler", normalMapRenderTargetTexture);
+    effect.setVector2(
+      "resolution",
+      new BABYLON.Vector2(engine.getRenderWidth(), engine.getRenderHeight())
+    );
   };
 
   scene.registerBeforeRender(() => {

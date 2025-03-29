@@ -37,9 +37,9 @@ const sketches = [
     load: () => import("./005-greybox-texture/index.js"),
   },
   {
-    id: "006-dithering",
+    id: "006-shading",
     thumbnail: null,
-    load: () => import("./006-dithering/index.js"),
+    load: () => import("./006-shading/index.js"),
   },
 ];
 
