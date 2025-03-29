@@ -48,6 +48,11 @@ const sketches = [
     thumbnail: thumbnail007,
     load: () => import("./007-dithering/index.js"),
   },
+  {
+    id: "008-kuwahara",
+    thumbnail: null,
+    load: () => import("./008-kuwahara/index.js"),
+  },
 ];
 
 export { sketches };
