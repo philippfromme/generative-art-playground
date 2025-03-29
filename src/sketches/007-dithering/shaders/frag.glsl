@@ -12,6 +12,7 @@ uniform sampler2D normalSampler;
 uniform float cameraNear;
 uniform float cameraFar;
 uniform vec2 resolution;
+uniform float pixelSize;
 uniform float matrixSize;
 uniform float bias;
 
@@ -107,8 +108,14 @@ void main(void)
 
   float lum = dot(vec3(0.2126, 0.7152, 0.0722), color.rgb);
 
+  vec2 normalizedPixelSize = pixelSize / resolution;  
+  vec2 uvPixel = normalizedPixelSize * floor(vUV / normalizedPixelSize);
+
   // color.rgb = whiteNoiseDither(vUV, lum);
   // color.rgb = orderedDither(vUV, lum);
+
+  color = texture(textureSampler, uvPixel);
+
   color.rgb = dither(vUV, color.rgb);
 
   fragColor = color;

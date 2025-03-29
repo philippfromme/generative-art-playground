@@ -176,6 +176,7 @@ function render(node) {
       "cameraNear",
       "cameraFar",
       "resolution",
+      "pixelSize",
       "matrixSize",
       "bias",
     ],
@@ -192,6 +193,7 @@ function render(node) {
       "resolution",
       new BABYLON.Vector2(engine.getRenderWidth(), engine.getRenderHeight())
     );
+    effect.setFloat("pixelSize", 4.0);
     effect.setFloat("matrixSize", 4.0);
     effect.setFloat("bias", 0.3);
   };
