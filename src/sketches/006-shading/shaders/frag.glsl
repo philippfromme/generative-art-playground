@@ -18,6 +18,11 @@ float readDepth( sampler2D depthTexture, vec2 coord ) {
   return fragCoordZ;
 }
 
+float luma(vec3 color) {
+  const vec3 magic = vec3(0.2125, 0.7154, 0.0721);
+  return dot(magic, color);
+}
+
 void main(void)
 {
   vec2 texel = vec2(1.0 / resolution.x, 1.0 / resolution.y);
@@ -49,7 +54,31 @@ void main(void)
 
   float gradientDepth = sqrt(pow(xSobelValue, 2.0) + pow(ySobelValue, 2.0));
 
-  float outline = gradientDepth;
+  float normal00 = luma(texture2D(normalSampler, vUV + outlineThickness * texel * vec2(-1, -1)).rgb);
+  float normal01 = luma(texture2D(normalSampler, vUV + outlineThickness * texel * vec2(-1, 0)).rgb);
+  float normal02 = luma(texture2D(normalSampler, vUV + outlineThickness * texel * vec2(-1, 1)).rgb);
+
+  float normal10 = luma(texture2D(normalSampler, vUV + outlineThickness * texel * vec2(0, -1)).rgb);
+  float normal11 = luma(texture2D(normalSampler, vUV + outlineThickness * texel * vec2(0, 0)).rgb);
+  float normal12 = luma(texture2D(normalSampler, vUV + outlineThickness * texel * vec2(0, 1)).rgb);
+
+  float normal20 = luma(texture2D(normalSampler, vUV + outlineThickness * texel * vec2(1, -1)).rgb);
+  float normal21 = luma(texture2D(normalSampler, vUV + outlineThickness * texel * vec2(1, 0)).rgb);
+  float normal22 = luma(texture2D(normalSampler, vUV + outlineThickness * texel * vec2(1, 1)).rgb);
+
+  float xSobelNormal = 
+    Sx[0][0] * normal00 + Sx[1][0] * normal10 + Sx[2][0] * normal20 +
+		Sx[0][1] * normal01 + Sx[1][1] * normal11 + Sx[2][1] * normal21 +
+		Sx[0][2] * normal02 + Sx[1][2] * normal12 + Sx[2][2] * normal22;
+
+  float ySobelNormal = 
+    Sy[0][0] * normal00 + Sy[1][0] * normal10 + Sy[2][0] * normal20 +
+    Sy[0][1] * normal01 + Sy[1][1] * normal11 + Sy[2][1] * normal21 +
+    Sy[0][2] * normal02 + Sy[1][2] * normal12 + Sy[2][2] * normal22;
+
+  float gradientNormal = sqrt(pow(xSobelNormal, 2.0) + pow(ySobelNormal, 2.0));
+
+  float outline = gradientDepth * 25.0 + gradientNormal;
 
   vec4 color = mix(pixelColor, outlineColor, outline);
 
