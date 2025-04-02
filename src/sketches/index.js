@@ -5,6 +5,7 @@ import thumbnail004 from "./004-noise/thumbnail.png";
 import thumbnail005 from "./005-greybox-texture/thumbnail.png";
 import thumbnail006 from "./006-shading/thumbnail.png";
 import thumbnail007 from "./007-dithering/thumbnail.png";
+import thumbnail008 from "./008-kuwahara/thumbnail.png";
 
 const sketches = [
   {
@@ -44,7 +45,7 @@ const sketches = [
   },
   {
     id: "008-kuwahara",
-    thumbnail: null,
+    thumbnail: thumbnail008,
     load: () => import("./008-kuwahara/index.js"),
   },
 ];
