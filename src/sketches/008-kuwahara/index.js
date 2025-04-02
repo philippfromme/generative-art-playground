@@ -18,27 +18,33 @@ function render(node) {
 
   scene.clearColor = new BABYLON.Color3(1.0, 1.0, 1.0);
 
-  const camera = new BABYLON.ArcRotateCamera(
-    "camera",
-    Math.PI / 2,
-    Math.PI / 2,
-    5,
-    BABYLON.Vector3.Zero(),
-    scene
-  );
+  // const camera = new BABYLON.ArcRotateCamera(
+  //   "camera",
+  //   Math.PI / 2,
+  //   Math.PI / 2,
+  //   5,
+  //   BABYLON.Vector3.Zero(),
+  //   scene
+  // );
 
-  camera.setTarget(BABYLON.Vector3.Zero());
-  camera.setPosition(new BABYLON.Vector3(0, 5, -10));
+  // camera.setTarget(BABYLON.Vector3.Zero());
+  // camera.setPosition(new BABYLON.Vector3(0, 5, -10));
 
+  // camera.minZ = 0.1;
+  // camera.maxZ = 100;
+
+  // camera.lowerBetaLimit = 0.1;
+  // camera.upperBetaLimit = Math.PI / 2 - 0.2;
+
+  // camera.attachControl(canvas, true);
+
+  // camera.wheelPrecision = 50;
+
+  const camera = createFPSCamera(canvas, scene);
+  camera.position = new BABYLON.Vector3(0, 10, 10);
+  camera.target = new BABYLON.Vector3(0, 0, 0);
   camera.minZ = 0.1;
-  camera.maxZ = 50;
-
-  camera.lowerBetaLimit = 0.1;
-  camera.upperBetaLimit = Math.PI / 2 - 0.2;
-
-  camera.attachControl(canvas, true);
-
-  camera.wheelPrecision = 50;
+  camera.maxZ = 100;
 
   const light = new BABYLON.DirectionalLight(
     "light",
@@ -165,13 +171,15 @@ function render(node) {
   // torus.receiveShadows = true;
   // ground.receiveShadows = true;
 
+  const depthTexture = scene.enableDepthRenderer().getDepthMap();
+
   BABYLON.Effect.ShadersStore["customFragmentShader"] = kuwaharaFrag;
 
   const postProcess = new BABYLON.PostProcess(
     "custom",
     "custom",
     null,
-    ["resolution", "kernelSize", "radius"],
+    ["resolution", "kernelSize", "radius", "depthSampler"],
     1.0,
     camera
   );
@@ -183,6 +191,7 @@ function render(node) {
     );
     effect.setInt("kernelSize", 6);
     effect.setInt("radius", 10);
+    effect.setTexture("depthSampler", depthTexture);
   };
 
   let apollo;
@@ -200,6 +209,54 @@ function render(node) {
         apollo = mesh;
 
         mesh.scaling.scaleInPlace(0.75);
+      }
+
+      // mesh.convertToFlatShadedMesh();
+
+      mesh.receiveShadows = true;
+
+      shadowGenerator.getShadowMap().renderList.push(mesh);
+      // shadowGenerator2.getShadowMap().renderList.push(mesh);
+    });
+  });
+
+  BABYLON.SceneLoader.ImportMeshAsync(
+    "",
+    "sketches/008-kuwahara/antenna.glb",
+    "",
+    scene
+  ).then((result) => {
+    console.log(result);
+
+    result.meshes.forEach((mesh) => {
+      if (mesh.id === "__root__") {
+        mesh.scaling.scaleInPlace(0.75);
+
+        mesh.position.x = 50;
+      }
+
+      // mesh.convertToFlatShadedMesh();
+
+      mesh.receiveShadows = true;
+
+      shadowGenerator.getShadowMap().renderList.push(mesh);
+      // shadowGenerator2.getShadowMap().renderList.push(mesh);
+    });
+  });
+
+  BABYLON.SceneLoader.ImportMeshAsync(
+    "",
+    "sketches/008-kuwahara/suit.glb",
+    "",
+    scene
+  ).then((result) => {
+    console.log(result);
+
+    result.meshes.forEach((mesh) => {
+      if (mesh.id === "__root__") {
+        mesh.scaling.scaleInPlace(1);
+
+        mesh.position.x = 10;
       }
 
       // mesh.convertToFlatShadedMesh();
@@ -283,3 +340,30 @@ function render(node) {
 }
 
 export default render;
+
+export function createFPSCamera(canvas, scene) {
+  const camera = new BABYLON.UniversalCamera(
+    "FPSCamera",
+    new BABYLON.Vector3(0, 10, 0),
+    scene
+  );
+
+  camera.attachControl(canvas, true);
+
+  // make slower
+  camera.speed = 0.2;
+  camera.inertia = 0.95;
+  camera.angularSensibility = 10000;
+
+  camera.keysUp.push(87);
+  camera.keysDown.push(83);
+  camera.keysRight.push(68);
+  camera.keysLeft.push(65);
+  camera.keysUpward.push(32);
+
+  canvas.addEventListener("click", async () => {
+    await canvas.requestPointerLock();
+  });
+
+  return camera;
+}

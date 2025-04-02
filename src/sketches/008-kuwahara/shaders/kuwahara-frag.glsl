@@ -3,6 +3,7 @@
 uniform int radius;
 uniform int kernelSize;
 uniform sampler2D textureSampler;
+uniform sampler2D depthSampler;
 uniform vec2 resolution;
 uniform sampler2D originalTexture;
 
@@ -53,5 +54,21 @@ void main() {
         }
     }
 
-    gl_FragColor = vec4(finalColor, 1.0);
+    // Sample original color
+    vec3 originalColor = texture2D(textureSampler, vUV).rgb;
+
+    // Sample depth value
+    float depth = texture2D(depthSampler, vUV).r;
+
+    // Map depth to intensity factor (closer objects get full effect)
+    float intensityFactor = smoothstep(0.1, 1.0, depth); // Adjust range as needed
+
+    // intensityFactor = 0.0;
+
+    // Blend between original and filtered colors based on intensity factor
+    // closer objects will have more of the Kuwahara effect
+    // while farther objects will retain more of the original color
+    vec3 mixedColor = mix(finalColor, originalColor, intensityFactor);
+
+    gl_FragColor = vec4(mixedColor, 1.0);
 }

@@ -43,11 +43,11 @@ function showGallery() {
 function showSketch(sketchId) {
   const { load } = sketches.find(({ id }) => id === sketchId);
 
-  load().then(({ default: render }) => {
+  load().then(async ({ default: render }) => {
     gallery.classList.add("hidden");
     sketch.classList.remove("hidden");
 
-    cleanup = render(sketch);
+    cleanup = await render(sketch);
   });
 }
 

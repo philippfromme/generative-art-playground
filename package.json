@@ -23,6 +23,7 @@
     "@babylonjs/materials": "^8.0.1",
     "alea": "^1.0.1",
     "babel-loader": "^8.2.5",
+    "chroma-js": "^3.1.2",
     "copy-webpack-plugin": "^13.0.0",
     "cross-env": "^7.0.3",
     "css-loader": "^6.7.1",
