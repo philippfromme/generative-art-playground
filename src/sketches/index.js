@@ -1,4 +1,3 @@
-import thumbnail000 from "./000-hello-world/thumbnail.png";
 import thumbnail001 from "./001-subdivision/thumbnail.png";
 import thumbnail002 from "./002-dots/thumbnail.png";
 import thumbnail003 from "./003-voronoi/thumbnail.png";
@@ -8,11 +7,6 @@ import thumbnail006 from "./006-shading/thumbnail.png";
 import thumbnail007 from "./007-dithering/thumbnail.png";
 
 const sketches = [
-  {
-    id: "000-hello-world",
-    thumbnail: thumbnail000,
-    load: () => import("./000-hello-world/index.js"),
-  },
   {
     id: "001-subdivision",
     thumbnail: thumbnail001,
